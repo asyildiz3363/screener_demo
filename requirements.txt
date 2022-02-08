@@ -1,0 +1,6 @@
+pandas==1.2.4
+yfinance==0.1.67
+sqlalchemy==1.4.7
+DateTime==4.3
+ccxt==1.64.42
+schedule==1.1.0
