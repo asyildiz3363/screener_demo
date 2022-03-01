@@ -1,75 +1,117 @@
+import streamlit as st
 import pandas as pd
+import sqlalchemy
+import ta
+import numpy as np
 import yfinance as yf
 import sqlalchemy
-import yfinance as yf
-import datetime as dt
 import ccxt
-import os
 import time
-import schedule
+import os
 
-def job():
-    
+st.title('Screener')
+@st.cache
+def getdata():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
-
     symbols1=pd.read_csv('csymbols.csv',header=None)
     symbols=symbols1.iloc[:,0].to_list()
-    symbols
 
-    data = []
+
     index = 1
-    start = time.perf_counter()
-    for ticker in symbols[:10]:
-        print(index,ticker,end="\r")
+    fullnames=symbols1.iloc[:,1].to_list()
+    engine=sqlalchemy.create_engine('sqlite:///günlük.db')
+    enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
+    for ticker,fullname in zip(symbols[:10],fullnames[:10]):
         index += 1
-        data2= exchange.fetch_ohlcv(ticker, timeframe='1d',limit=251)
-        header = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-        dfc = pd.DataFrame(data2, columns=header)
-        dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
-        data.append(dfc)
-    end = time.perf_counter()
-    print(end - start) 
-    
-    bdata= []
+        try:
+            data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
+            data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+        except Exception as e:
+            print(e)
+        else:
+            header = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+            dfc = pd.DataFrame(data2, columns=header)
+            dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
+            dfc.to_sql(fullname,engine, if_exists='replace')
+            dfc2 = pd.DataFrame(data3, columns=header)
+            dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
+            dfc2.to_sql(fullname,enginew, if_exists='replace')
+
     index2 = 1
     bsymbols1=pd.read_csv('bsymbols.csv',header=None)
     bsymbols=bsymbols1.iloc[:,0].to_list()
-    for bticker in bsymbols:
+    for bticker in bsymbols[:10]:
         print(index2,bticker,end="\r")
         index2 += 1
-        df=yf.download(bticker,period="1y")
+        df=yf.download(bticker,period="3mo")
         df2=df.drop('Adj Close', 1)
         df3=df2.reset_index()
         df4=df3.round(2)
-        bdata.append(df4)
-    
-    fullname=symbols1.iloc[:,1].to_list()
-    engine=sqlalchemy.create_engine('sqlite:///günlük.db')
+        df4.to_sql(bticker,engine, if_exists='replace')
+        dfw=yf.download(bticker,period="55wk",interval = "1wk")
+        df2w=dfw.drop('Adj Close', 1)
+        df3w=df2w.reset_index()
+        df4w=df3w.round(2)
+        df4w.to_sql(bticker,enginew, if_exists='replace')
 
-    start = time.perf_counter()
-    for frame,symbol in zip(data,fullname):
-        frame.to_sql(symbol,engine, if_exists='replace')
     end = time.perf_counter()
     print(end - start) 
-
-    for bframe,bsymbol in zip(bdata,bsymbols):
-        bframe.to_sql(bsymbol,engine, if_exists='replace') 
+st.button('Get Data',on_click=getdata())
 
 
-#schedule.every(10).seconds.do(job)
-schedule.every(5).minutes.do(job)
-#schedule.every().hour.do(job)
-#schedule.every().day.at("08:00").do(job)
-#schedule.every(5).to(10).minutes.do(job)
-#schedule.every().monday.do(job)
-# schedule.every().monday.at("09:15").do(job)
-# schedule.every().tuesday.at("09:15").do(job)
-# schedule.every().wednesday.at("09:15").do(job)
-# schedule.every().thursday.at("09:15").do(job)
-# schedule.every().friday.at("09:15").do(job)
-#schedule.every().minute.at(":17").do(job)
+engine=sqlalchemy.create_engine('sqlite:///günlük.db')
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+names = pd.read_sql('SELECT name FROM sqlite_master WHERE type="table"',engine)
+names = names.name.to_list()
+
+
+framelist=[]
+for name in names[:10]:
+    framelist.append(pd.read_sql(f'SELECT Date,Close,High,Low FROM "{name}"',engine))
+
+def MACDdecision(df):
+    df['MACD_diff']= ta.trend.macd_diff(df.Close)
+    df.loc[(df.MACD_diff>0)& (df.MACD_diff.shift(1)<0),'Decision MACD']='Buy'
+
+def EMA_decision(df):
+    df['EMA'] = ta.trend.ema_indicator(df.Close,window=50)
+    df.loc[(df.Close>df['EMA']), 'Decision EMA'] = 'Buy'
+
+def ADX_decision(df):
+    df['ADX']= ta.trend.adx(df.High, df.Low, df.Close)
+    df.loc[(df.ADX>=18),'Decision ADX']='Buy'
+
+np.seterr(divide='ignore', invalid='ignore')
+for name,frame in zip(names,framelist):  
+    if len(frame)>30:
+            MACDdecision(frame)
+            EMA_decision(frame)
+            print(name)
+            print(frame)
+
+option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
+st.header(option)
+
+if option == 'MACD':
+    sira=0
+    for name, frame in zip(names,framelist):
+        try:   
+            if  len(frame)>30 and frame['Decision MACD'].iloc[-1]=='Buy' \
+            and frame['Decision EMA'].iloc[-1]=='Buy':
+                sira +=1
+                print(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
+        except:
+            print(name)
+            st.write(name)
+
+if option == 'EMA':
+    sira=0
+    for name, frame in zip(names,framelist):
+        try:   
+            if  len(frame)>30 and frame['Decision EMA'].iloc[-1]=='Buy':
+                sira +=1
+                st.write(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
+        except Exception as e:
+            print(name,e)
+            st.write(name)
