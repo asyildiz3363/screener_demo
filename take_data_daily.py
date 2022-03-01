@@ -6,8 +6,8 @@ import numpy as np
 import yfinance as yf
 import sqlalchemy
 import ccxt
-import time
-import os
+
+
 
 st.title('Screener')
 @st.cache
@@ -55,8 +55,6 @@ def getdata():
         df4w=df3w.round(2)
         df4w.to_sql(bticker,enginew, if_exists='replace')
 
-    end = time.perf_counter()
-    print(end - start) 
 st.button('Get Data',on_click=getdata())
 
 
