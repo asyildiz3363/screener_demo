@@ -9,7 +9,7 @@ import ccxt
 
 st.title('Screener')
 @st.cache
-def get_data()
+def get_data():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
     symbols1=pd.read_csv('csymbols.csv',header=None)
