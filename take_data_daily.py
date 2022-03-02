@@ -6,6 +6,7 @@ import numpy as np
 import yfinance as yf
 import sqlalchemy
 import ccxt
+import time
 
 
 
@@ -16,8 +17,7 @@ def getdata():
     markets= exchange.load_markets()    
     symbols1=pd.read_csv('csymbols.csv',header=None)
     symbols=symbols1.iloc[:,0].to_list()
-
-
+    
     index = 1
     fullnames=symbols1.iloc[:,1].to_list()
     engine=sqlalchemy.create_engine('sqlite:///günlük.db')
@@ -38,6 +38,10 @@ def getdata():
             #dfc2 = pd.DataFrame(data3, columns=header)
             #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
             #dfc2.to_sql(fullname,enginew, if_exists='replace')
+    my_bar = st.progress(0)
+        for index in range(20):
+            time.sleep(0.1)
+            my_bar.progress(index + 1)
 
     index2 = 1
     bsymbols1=pd.read_csv('bsymbols.csv',header=None)
