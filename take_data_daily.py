@@ -8,8 +8,6 @@ import sqlalchemy
 import ccxt
 import time
 
-
-
 st.title('Screener')
 @st.cache(suppress_st_warning=True)
 def getdata():
@@ -38,17 +36,13 @@ def getdata():
             #dfc2 = pd.DataFrame(data3, columns=header)
             #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
             #dfc2.to_sql(fullname,enginew, if_exists='replace')
-        my_bar = st.progress(0)
-        for index in range(20):
-            time.sleep(0.1)
-            my_bar.progress(index + 1)
 
-    index2 = 1
+ 
     bsymbols1=pd.read_csv('bsymbols.csv',header=None)
     bsymbols=bsymbols1.iloc[:,0].to_list()
     for bticker in bsymbols[:10]:
         print(index2,bticker,end="\r")
-        index2 += 1
+        index += 1
         df=yf.download(bticker,period="3mo")
         df2=df.drop('Adj Close', 1)
         df3=df2.reset_index()
@@ -59,6 +53,9 @@ def getdata():
         #df3w=df2w.reset_index()
         #df4w=df3w.round(2)
         #df4w.to_sql(bticker,enginew, if_exists='replace')
+    my_bar = st.progress(0)
+    time.sleep(0.1)
+    my_bar.progress(index + 1)
 
 st.button('Get Data',on_click=getdata())
 
