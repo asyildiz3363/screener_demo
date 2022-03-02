@@ -29,7 +29,7 @@ def getdata():
                         st.write(index,ticker,end="\r")
                 #st.write("This is another")
                 # Clear all those elements:
-                placeholder.empty()
+                #placeholder.empty()
             except Exception as e:
                 print(e)
             else:
