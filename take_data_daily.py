@@ -27,6 +27,7 @@ def getdata():
         try:
             data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
             #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+            st.write(ticker)
         except Exception as e:
             print(e)
         else:
