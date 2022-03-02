@@ -13,7 +13,6 @@ st.title('Screener')
 def getdata():
         my_bar = st.progress(0)
         #time.sleep(0.1)
-        my_bar.progress(percent_complete + 1)
         exchange=ccxt.currencycom()
         markets= exchange.load_markets()    
         symbols1=pd.read_csv('csymbols.csv',header=None)
