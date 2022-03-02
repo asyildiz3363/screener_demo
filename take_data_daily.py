@@ -7,10 +7,8 @@ import yfinance as yf
 import sqlalchemy
 import ccxt
 
-
-
 st.title('Screener')
-@st.cache
+#@st.cache
 exchange=ccxt.currencycom()
 markets= exchange.load_markets()    
 symbols1=pd.read_csv('csymbols.csv',header=None)
@@ -51,7 +49,7 @@ for bticker in bsymbols[:10]:
     #df3w=df2w.reset_index()
     #df4w=df3w.round(2)
     #df4w.to_sql(bticker,enginew, if_exists='replac
-Button('Get Data',on_click=getdata())
+#Button('Get Data',on_click=getdata())
 
 
 engine=sqlalchemy.create_engine('sqlite:///günlük.db')
