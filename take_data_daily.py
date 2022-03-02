@@ -21,12 +21,12 @@ def getdata():
     index = 1
     fullnames=symbols1.iloc[:,1].to_list()
     engine=sqlalchemy.create_engine('sqlite:///günlük.db')
-    enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
+    #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
     for ticker,fullname in zip(symbols,fullnames):
         index += 1
         try:
             data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
-            data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+            #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
         except Exception as e:
             print(e)
         else:
@@ -34,9 +34,9 @@ def getdata():
             dfc = pd.DataFrame(data2, columns=header)
             dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
             dfc.to_sql(fullname,engine, if_exists='replace')
-            dfc2 = pd.DataFrame(data3, columns=header)
-            dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
-            dfc2.to_sql(fullname,enginew, if_exists='replace')
+            #dfc2 = pd.DataFrame(data3, columns=header)
+            #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
+            #dfc2.to_sql(fullname,enginew, if_exists='replace')
 
     index2 = 1
     bsymbols1=pd.read_csv('bsymbols.csv',header=None)
@@ -49,11 +49,11 @@ def getdata():
         df3=df2.reset_index()
         df4=df3.round(2)
         df4.to_sql(bticker,engine, if_exists='replace')
-        dfw=yf.download(bticker,period="55wk",interval = "1wk")
-        df2w=dfw.drop('Adj Close', 1)
-        df3w=df2w.reset_index()
-        df4w=df3w.round(2)
-        df4w.to_sql(bticker,enginew, if_exists='replace')
+        #dfw=yf.download(bticker,period="55wk",interval = "1wk")
+        #df2w=dfw.drop('Adj Close', 1)
+        #df3w=df2w.reset_index()
+        #df4w=df3w.round(2)
+        #df4w.to_sql(bticker,enginew, if_exists='replace')
 
 st.button('Get Data',on_click=getdata())
 
