@@ -12,7 +12,7 @@ st.title('Screener')
 exchange=ccxt.currencycom()
 markets= exchange.load_markets()    
 symbols1=pd.read_csv('csymbols.csv',header=None)
-symbols=symbols1.iloc[:,0].to_lis
+symbols=symbols1.iloc[:,0].to_list
 
 index = 1
 fullnames=symbols1.iloc[:,1].to_list()
