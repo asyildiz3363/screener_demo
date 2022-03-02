@@ -6,13 +6,10 @@ import numpy as np
 import yfinance as yf
 import sqlalchemy
 import ccxt
-import time
 
 st.title('Screener')
 @st.cache(suppress_st_warning=True)
 def getdata():
-        my_bar = st.progress(0)
-        #time.sleep(0.1)
         exchange=ccxt.currencycom()
         markets= exchange.load_markets()    
         symbols1=pd.read_csv('csymbols.csv',header=None)
@@ -22,12 +19,11 @@ def getdata():
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
         for ticker,fullname in zip(symbols[:10],fullnames[:10]):
-            my_bar.progress(index+1)
-            #index += 1
+            index += 1
             try:
                 data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
                 #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
-                #st.write(ticker)
+                st.write(index,ticker,end="\r")
             except Exception as e:
                 print(e)
             else:
@@ -44,9 +40,9 @@ def getdata():
         bsymbols=bsymbols1.iloc[:,0].to_list()
         for bticker in bsymbols[:10]:
             #print(index,bticker,end="\r")
-            #st.write(index,bticker,end="\r")
-            #index += 1
-            my_bar.progress(index+1)
+            st.write(index,bticker,end="\r")
+            st.empty()
+            index += 1
             df=yf.download(bticker,period="3mo")
             df2=df.drop('Adj Close', 1)
             df3=df2.reset_index()
