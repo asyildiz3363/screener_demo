@@ -45,7 +45,8 @@ def getdata():
         for bticker in bsymbols[:10]:
             #print(index,bticker,end="\r")
             #st.write(index,bticker,end="\r")
-            index += 1
+            #index += 1
+            my_bar.progress(index+1)
             df=yf.download(bticker,period="3mo")
             df2=df.drop('Adj Close', 1)
             df3=df2.reset_index()
