@@ -14,7 +14,7 @@ def getdata():
         markets= exchange.load_markets()    
         symbols1=pd.read_csv('csymbols.csv',header=None)
         symbols=symbols1.iloc[:,0].to_list()
-        index = 1
+        index = 0
         fullnames=symbols1.iloc[:,1].to_list()
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
@@ -40,8 +40,8 @@ def getdata():
         bsymbols=bsymbols1.iloc[:,0].to_list()
         for bticker in bsymbols[:10]:
             #print(index,bticker,end="\r")
-            st.write(index,bticker,end="\r")
-            st.empty()
+            with st.empty():
+                        st.write(index,bticker,end="\r")
             index += 1
             df=yf.download(bticker,period="3mo")
             df2=df.drop('Adj Close', 1)
