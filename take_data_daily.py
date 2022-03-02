@@ -11,21 +11,20 @@ import time
 st.title('Screener')
 @st.cache(suppress_st_warning=True)
 def getdata():
-  my_bar = st.progress(0)
-  for percent_complete in range(100):
-        time.sleep(0.1)
+        my_bar = st.progress(0)
+        #time.sleep(0.1)
         my_bar.progress(percent_complete + 1)
         exchange=ccxt.currencycom()
         markets= exchange.load_markets()    
         symbols1=pd.read_csv('csymbols.csv',header=None)
         symbols=symbols1.iloc[:,0].to_list()
-        
         index = 1
         fullnames=symbols1.iloc[:,1].to_list()
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
         for ticker,fullname in zip(symbols[:10],fullnames[:10]):
-            index += 1
+            my_bar.progress(index += 1)
+            #index += 1
             try:
                 data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
                 #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
