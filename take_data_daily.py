@@ -7,14 +7,17 @@ import yfinance as yf
 import sqlalchemy
 import ccxt
 
+
+
 st.title('Screener')
-#@st.cache
-def get_data():
+@st.cache
+def getdata():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
     symbols1=pd.read_csv('csymbols.csv',header=None)
-    symbols=symbols1.iloc[:,0].to_list
-    
+    symbols=symbols1.iloc[:,0].to_list()
+
+
     index = 1
     fullnames=symbols1.iloc[:,1].to_list()
     engine=sqlalchemy.create_engine('sqlite:///günlük.db')
@@ -33,7 +36,8 @@ def get_data():
             dfc.to_sql(fullname,engine, if_exists='replace')
             #dfc2 = pd.DataFrame(data3, columns=header)
             #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
-            #dfc2.to_sql(fullname,enginew, if_exists='replac
+            #dfc2.to_sql(fullname,enginew, if_exists='replace')
+
     index2 = 1
     bsymbols1=pd.read_csv('bsymbols.csv',header=None)
     bsymbols=bsymbols1.iloc[:,0].to_list()
@@ -49,8 +53,9 @@ def get_data():
         #df2w=dfw.drop('Adj Close', 1)
         #df3w=df2w.reset_index()
         #df4w=df3w.round(2)
-        #df4w.to_sql(bticker,enginew, if_exists='replac
-st.button('Get Data',on_click=get_data())
+        #df4w.to_sql(bticker,enginew, if_exists='replace')
+
+st.button('Get Data',on_click=getdata())
 
 
 engine=sqlalchemy.create_engine('sqlite:///günlük.db')
