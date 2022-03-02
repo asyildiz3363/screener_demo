@@ -10,7 +10,7 @@ import ccxt
 
 
 st.title('Screener')
-@st.cache
+@st.cache(suppress_st_warning=True)
 def getdata():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
