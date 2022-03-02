@@ -27,7 +27,6 @@ def getdata():
                 # Replace the chart with several elements:
                 with placeholder.container():
                         st.write(index,ticker,end="\r")
-                        placeholder.empty()
                 #st.write("This is another")
                 # Clear all those elements:
                 
