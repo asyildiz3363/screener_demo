@@ -50,7 +50,7 @@ def get_data():
         #df3w=df2w.reset_index()
         #df4w=df3w.round(2)
         #df4w.to_sql(bticker,enginew, if_exists='replac
-st.button('Get Data',on_click=getdata())
+st.button('Get Data',on_click=get_data())
 
 
 engine=sqlalchemy.create_engine('sqlite:///günlük.db')
