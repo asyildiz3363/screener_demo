@@ -40,7 +40,7 @@ def getdata():
         bsymbols=bsymbols1.iloc[:,0].to_list()
         for bticker in bsymbols[:10]:
             #print(index,bticker,end="\r")
-            c=s.empty
+            c=st.empty
             st.write(index,bticker)
             index += 1
             df=yf.download(bticker,period="3mo")
