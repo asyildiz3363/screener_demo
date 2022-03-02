@@ -8,7 +8,7 @@ import sqlalchemy
 import ccxt
 
 st.title('Screener')
-@st.cache
+#@st.cache
 def get_data():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
