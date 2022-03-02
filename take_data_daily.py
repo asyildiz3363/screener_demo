@@ -53,9 +53,6 @@ def getdata():
         #df3w=df2w.reset_index()
         #df4w=df3w.round(2)
         #df4w.to_sql(bticker,enginew, if_exists='replace')
-    my_bar = st.progress(0)
-    time.sleep(0.1)
-    my_bar.progress(index + 1)
 
 st.button('Get Data',on_click=getdata())
 
