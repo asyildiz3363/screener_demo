@@ -40,8 +40,7 @@ def getdata():
         bsymbols=bsymbols1.iloc[:,0].to_list()
         for bticker in bsymbols[:10]:
             #print(index,bticker,end="\r")
-            with st.empty():
-                        st.write(index,bticker,end="\r")
+            st.write(index,bticker,end="\r")
             index += 1
             df=yf.download(bticker,period="3mo")
             df2=df.drop('Adj Close', 1)
