@@ -6,7 +6,9 @@ import numpy as np
 import yfinance as yf
 import sqlalchemy
 import ccxt
+import time
 
+start = time.perf_counter() 
 st.title('Screener')
 @st.cache(suppress_st_warning=True)
 def getdata():
@@ -18,50 +20,47 @@ def getdata():
         fullnames=symbols1.iloc[:,1].to_list()
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
-        for ticker,fullname in zip(symbols[:10],fullnames[:10]):
-            index += 1
-            try:
-                data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
-                #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
-                placeholder = st.empty()
-                # Replace the chart with several elements:
-                with placeholder.container():
-                        st.write(index,ticker,end="\r")
-                #st.write("This is another")
-                # Clear all those elements:
-                
-            except Exception as e:
-                print(e)
-            else:
-                header = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-                dfc = pd.DataFrame(data2, columns=header)
-                dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
-                dfc.to_sql(fullname,engine, if_exists='replace')
-                #dfc2 = pd.DataFrame(data3, columns=header)
-                #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
-                #dfc2.to_sql(fullname,enginew, if_exists='replace')
+        with st.empty():
+            for ticker,fullname in zip(symbols[:10],fullnames[:10]):
+                index += 1
+                try:
+                    data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
+                    #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+                    st.write(f"⏳ {index,ticker} seconds have passed")
+                #st.write(index,ticker,end="\r")     
+                except Exception as e:
+                    print(e)
+                else:
+                    header = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+                    dfc = pd.DataFrame(data2, columns=header)
+                    dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
+                    dfc.to_sql(fullname,engine, if_exists='replace')
+                    #dfc2 = pd.DataFrame(data3, columns=header)
+                    #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
+                    #dfc2.to_sql(fullname,enginew, if_exists='replace')
     
-    
-        bsymbols1=pd.read_csv('bsymbols.csv',header=None)
-        bsymbols=bsymbols1.iloc[:,0].to_list()
-        for bticker in bsymbols[:10]:
-            #print(index,bticker,end="\r")
-            c=st.empty
-            st.write(index,bticker)
             index += 1
-            df=yf.download(bticker,period="3mo")
-            df2=df.drop('Adj Close', 1)
-            df3=df2.reset_index()
-            df4=df3.round(2)
-            df4.to_sql(bticker,engine, if_exists='replace')
-            #dfw=yf.download(bticker,period="55wk",interval = "1wk")
-            #df2w=dfw.drop('Adj Close', 1)
-            #df3w=df2w.reset_index()
-            #df4w=df3w.round(2)
-            #df4w.to_sql(bticker,enginew, if_exists='replace')
+            bsymbols1=pd.read_csv('bsymbols.csv',header=None)
+            bsymbols=bsymbols1.iloc[:,0].to_list()
+            for bticker in bsymbols:
+                #print(index,bticker,end="\r")
+                st.write(f"⏳ {index,bticker} seconds have passed")
+                index += 1
+                df=yf.download(bticker,period="3mo")
+                df2=df.drop('Adj Close', 1)
+                df3=df2.reset_index()
+                df4=df3.round(2)
+                df4.to_sql(bticker,engine, if_exists='replace')
+                #dfw=yf.download(bticker,period="55wk",interval = "1wk")
+                #df2w=dfw.drop('Adj Close', 1)
+                #df3w=df2w.reset_index()
+                #df4w=df3w.round(2)
+                #df4w.to_sql(bticker,enginew, if_exists='replace')
 
 st.button('Get Data',on_click=getdata())
-
+end = time.perf_counter()
+#print(end - start) 
+st.write(end - start)
 
 engine=sqlalchemy.create_engine('sqlite:///günlük.db')
 
