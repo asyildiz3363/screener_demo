@@ -38,7 +38,7 @@ def getdata():
             #dfc2 = pd.DataFrame(data3, columns=header)
             #dfc2['Date'] = pd.to_datetime(dfc2['Date'],unit='ms')
             #dfc2.to_sql(fullname,enginew, if_exists='replace')
-    my_bar = st.progress(0)
+        my_bar = st.progress(0)
         for index in range(20):
             time.sleep(0.1)
             my_bar.progress(index + 1)
