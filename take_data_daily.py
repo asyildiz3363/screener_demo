@@ -23,7 +23,13 @@ def getdata():
             try:
                 data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
                 #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+                placeholder = st.empty()
+                # Replace the chart with several elements:
+                with placeholder.container():
                 st.write(index,ticker,end="\r")
+                #st.write("This is another")
+                # Clear all those elements:
+                placeholder.empty()
             except Exception as e:
                 print(e)
             else:
