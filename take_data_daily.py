@@ -27,7 +27,7 @@ def getdata():
                     data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
                     #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
                     st.write(f"⏳ {index,ticker} seconds have passed")
-                #st.write(index,ticker,end="\r")     
+                    print(index,ticker,end="\r")     
                 except Exception as e:
                     print(e)
                 else:
@@ -43,7 +43,7 @@ def getdata():
             bsymbols1=pd.read_csv('bsymbols.csv',header=None)
             bsymbols=bsymbols1.iloc[:,0].to_list()
             for bticker in bsymbols:
-                #print(index,bticker,end="\r")
+                print(index,bticker,end="\r")
                 st.write(f"⏳ {index,bticker} seconds have passed")
                 index += 1
                 df=yf.download(bticker,period="3mo")
@@ -56,8 +56,7 @@ def getdata():
                 #df3w=df2w.reset_index()
                 #df4w=df3w.round(2)
                 #df4w.to_sql(bticker,enginew, if_exists='replace')
-                return index
-st.write(index)
+                
 st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
 #print(end - start) 
