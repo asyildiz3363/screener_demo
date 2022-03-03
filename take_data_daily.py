@@ -90,7 +90,7 @@ for name,frame in zip(names,framelist):
             MACDdecision(frame)
             EMA_decision(frame)
             print(name)
-            print(frame)
+            #print(frame)
 
 option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
 st.header(option)
