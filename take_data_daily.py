@@ -56,7 +56,7 @@ def getdata():
                 #df3w=df2w.reset_index()
                 #df4w=df3w.round(2)
                 #df4w.to_sql(bticker,enginew, if_exists='replace')
-
+st.write(index)
 st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
 #print(end - start) 
