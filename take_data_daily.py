@@ -20,6 +20,7 @@ def getdata():
         fullnames=symbols1.iloc[:,1].to_list()
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
+        st.write(index)
         with st.empty():
             for ticker,fullname in zip(symbols,fullnames):
                 index += 1
@@ -56,7 +57,7 @@ def getdata():
                 #df3w=df2w.reset_index()
                 #df4w=df3w.round(2)
                 #df4w.to_sql(bticker,enginew, if_exists='replace')
-st.write(index)
+                
 st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
 #print(end - start) 
