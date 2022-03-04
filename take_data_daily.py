@@ -91,10 +91,8 @@ for name,frame in zip(names,framelist):
 
 dropdown = st.sidebar.multiselect('Symbol',names)
 for name,frame in zip(dropdown,framelist):  
-    if len(name)>0:
+    if len(dropdown)>0:
         st.write(frame)
-        #st.line_chart(frame.Close)
-        #st.line_chart(frame.EMA)
         st.line_chart(frame[['Close', 'EMA']])
 option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
 st.header(option)
