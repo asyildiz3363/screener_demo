@@ -60,71 +60,69 @@ st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
 st.write(end - start)
 
-def calculation():
-        engine=sqlalchemy.create_engine('sqlite:///günlük.db')
-        
-        names = pd.read_sql('SELECT name FROM sqlite_master WHERE type="table"',engine)
-        names = names.name.to_list()
-        
-        framelist=[]
-        for name in names:
-            framelist.append(pd.read_sql(f'SELECT Date,Close,High,Low FROM "{name}"',engine))
-        
-        def MACDdecision(df):
-            df['MACD_diff']= ta.trend.macd_diff(df.Close)
-            df.loc[(df.MACD_diff>0)& (df.MACD_diff.shift(1)<0),'Decision MACD']='Buy'
-        
-        def EMA_decision(df):
-            df['EMA'] = ta.trend.ema_indicator(df.Close,window=50)
-            df.loc[(df.Close>df['EMA']), 'Decision EMA'] = 'Buy'
-        
-        def ADX_decision(df):
-            df['ADX']= ta.trend.adx(df.High, df.Low, df.Close)
-            df.loc[(df.ADX>=18),'Decision ADX']='Buy'
-        
-        np.seterr(divide='ignore', invalid='ignore')
-        for name,frame in zip(names,framelist):  
-            if len(frame)>30:
-                    MACDdecision(frame)
-                    EMA_decision(frame)
-                    #print(name)
-                    #print(frame)
-        
-        dropdown = st.sidebar.multiselect('Symbol',names)
-        for name,frame in zip(dropdown,framelist):  
-            if len(frame)>30:
-                MACDdecision(frame)
-                EMA_decision(frame)
-                #print(name)
-                #print(frame)
-                #frame = frame.set_index('Date')
-                st.write(frame)
-                #st.line_chart(frame.Close)
-                #st.line_chart(frame.EMA)
-                st.line_chart(frame[['Close', 'EMA']])
-        option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
-        st.header(option)
-        
-        if option == 'MACD':
-            sira=0
-            for name, frame in zip(names,framelist):
-                try:   
-                    if  len(frame)>30 and frame['Decision MACD'].iloc[-1]=='Buy' \
-                    and frame['Decision EMA'].iloc[-1]=='Buy':
-                        sira +=1
-                        print(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
-                except:
-                    print(name)
-                    st.write(name)
-        
-        if option == 'EMA':
-            sira=0
-            for name, frame in zip(names,framelist):
-                try:   
-                    if  len(frame)>30 and frame['Decision EMA'].iloc[-1]=='Buy':
-                        sira +=1
-                        st.write(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
-                except Exception as e:
-                    print(name,e)
-                    st.write(name)
-st.button('Calc',on_click=calculation())
+engine=sqlalchemy.create_engine('sqlite:///günlük.db')
+
+names = pd.read_sql('SELECT name FROM sqlite_master WHERE type="table"',engine)
+names = names.name.to_list()
+
+framelist=[]
+for name in names:
+    framelist.append(pd.read_sql(f'SELECT Date,Close,High,Low FROM "{name}"',engine))
+
+def MACDdecision(df):
+    df['MACD_diff']= ta.trend.macd_diff(df.Close)
+    df.loc[(df.MACD_diff>0)& (df.MACD_diff.shift(1)<0),'Decision MACD']='Buy'
+
+def EMA_decision(df):
+    df['EMA'] = ta.trend.ema_indicator(df.Close,window=50)
+    df.loc[(df.Close>df['EMA']), 'Decision EMA'] = 'Buy'
+
+def ADX_decision(df):
+    df['ADX']= ta.trend.adx(df.High, df.Low, df.Close)
+    df.loc[(df.ADX>=18),'Decision ADX']='Buy'
+
+np.seterr(divide='ignore', invalid='ignore')
+for name,frame in zip(names,framelist):  
+    if len(frame)>30:
+            MACDdecision(frame)
+            EMA_decision(frame)
+            #print(name)
+            #print(frame)
+
+dropdown = st.sidebar.multiselect('Symbol',names)
+for name,frame in zip(dropdown,framelist):  
+    if len(frame)>30:
+        MACDdecision(frame)
+        EMA_decision(frame)
+        #print(name)
+        #print(frame)
+        #frame = frame.set_index('Date')
+        st.write(frame)
+        #st.line_chart(frame.Close)
+        #st.line_chart(frame.EMA)
+        st.line_chart(frame[['Close', 'EMA']])
+option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
+st.header(option)
+
+if option == 'MACD':
+    sira=0
+    for name, frame in zip(names,framelist):
+        try:   
+            if  len(frame)>30 and frame['Decision MACD'].iloc[-1]=='Buy' \
+            and frame['Decision EMA'].iloc[-1]=='Buy':
+                sira +=1
+                print(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
+        except:
+            print(name)
+            st.write(name)
+
+if option == 'EMA':
+    sira=0
+    for name, frame in zip(names,framelist):
+        try:   
+            if  len(frame)>30 and frame['Decision EMA'].iloc[-1]=='Buy':
+                sira +=1
+                st.write(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
+        except Exception as e:
+            print(name,e)
+            st.writ
