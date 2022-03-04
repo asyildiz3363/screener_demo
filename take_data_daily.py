@@ -91,12 +91,7 @@ for name,frame in zip(names,framelist):
 
 dropdown = st.sidebar.multiselect('Symbol',names)
 for name,frame in zip(dropdown,framelist):  
-    if len(frame)>30:
-        MACDdecision(frame)
-        EMA_decision(frame)
-        #print(name)
-        #print(frame)
-        #frame = frame.set_index('Date')
+    if len(name)>0:
         st.write(frame)
         #st.line_chart(frame.Close)
         #st.line_chart(frame.EMA)
