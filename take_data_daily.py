@@ -21,13 +21,12 @@ def getdata():
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
         with st.empty():
-            for ticker,fullname in zip(symbols,fullnames):
+            for ticker,fullname in zip(symbols[:10],fullnames[:10]):
                 index += 1
                 try:
                     data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
                     #data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
-                    st.write(f"⏳ {index,ticker} seconds have passed")
-                    print(index,ticker,end="\r")     
+                    st.write(f"⏳ {index,ticker} seconds have passed")     
                 except Exception as e:
                     print(e)
                 else:
@@ -42,8 +41,8 @@ def getdata():
             index += 1
             bsymbols1=pd.read_csv('bsymbols.csv',header=None)
             bsymbols=bsymbols1.iloc[:,0].to_list()
-            for bticker in bsymbols:
-                print(index,bticker,end="\r")
+            for bticker in bsymbols[:10]:
+                #print(index,bticker,end="\r")
                 st.write(f"⏳ {index,bticker} seconds have passed")
                 index += 1
                 df=yf.download(bticker,period="3mo")
@@ -56,17 +55,15 @@ def getdata():
                 #df3w=df2w.reset_index()
                 #df4w=df3w.round(2)
                 #df4w.to_sql(bticker,enginew, if_exists='replace')
-                
+
 st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
-#print(end - start) 
 st.write(end - start)
 
 engine=sqlalchemy.create_engine('sqlite:///günlük.db')
 
 names = pd.read_sql('SELECT name FROM sqlite_master WHERE type="table"',engine)
 names = names.name.to_list()
-
 
 framelist=[]
 for name in names[:10]:
@@ -89,9 +86,21 @@ for name,frame in zip(names,framelist):
     if len(frame)>30:
             MACDdecision(frame)
             EMA_decision(frame)
-            print(name)
+            #print(name)
             #print(frame)
 
+dropdown = st.sidebar.multiselect('Symbol',names[:5])
+for name,frame in zip(dropdown,framelist):  
+    if len(frame)>30:
+        MACDdecision(frame)
+        EMA_decision(frame)
+        #print(name)
+        #print(frame)
+        #frame = frame.set_index('Date')
+        st.write(frame)
+        #st.line_chart(frame.Close)
+        #st.line_chart(frame.EMA)
+        st.line_chart(frame[['Close', 'EMA']])
 option = st.sidebar.selectbox("Which Indicator?", ('MACD', 'EMA'))
 st.header(option)
 
