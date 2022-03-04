@@ -21,7 +21,7 @@ def getdata():
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         #enginew=sqlalchemy.create_engine('sqlite:///haftalik.db')
         with st.empty():
-            for ticker,fullname in zip(symbols,fullnames):
+            for ticker,fullname in zip(symbols[:10],fullnames[:10]):
                 index += 1
                 try:
                     data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=55) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
@@ -41,7 +41,7 @@ def getdata():
             index += 1
             bsymbols1=pd.read_csv('bsymbols.csv',header=None)
             bsymbols=bsymbols1.iloc[:,0].to_list()
-            for bticker in bsymbols:
+            for bticker in bsymbols[:10]:
                 #print(index,bticker,end="\r")
                 st.write(f"⏳ {index,bticker} seconds have passed")
                 index += 1
@@ -67,7 +67,7 @@ def calculation():
         names = names.name.to_list()
         
         framelist=[]
-        for name in names[:10]:
+        for name in names:
             framelist.append(pd.read_sql(f'SELECT Date,Close,High,Low FROM "{name}"',engine))
         
         def MACDdecision(df):
