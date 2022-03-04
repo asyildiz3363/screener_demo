@@ -127,4 +127,4 @@ def calculation():
                 except Exception as e:
                     print(name,e)
                     st.write(name)
-st.button('Get Data',on_click=calculation())
+st.button('Calc',on_click=calculation())
