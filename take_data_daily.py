@@ -125,4 +125,4 @@ if option == 'EMA':
                 st.write(str(sira)+" Buying Signal MACD/EMA200 for "+ name) 
         except Exception as e:
             print(name,e)
-            st.writ
+            st.write(name)
