@@ -11,7 +11,6 @@ import time
 start = time.perf_counter() 
 st.title('Screener')
 @st.cache(suppress_st_warning=True)
-st.button('Get Data',on_click=getdata())
 def getdata():
         exchange=ccxt.currencycom()
         markets= exchange.load_markets()    
@@ -60,7 +59,7 @@ def getdata():
 #st.button('Get Data',on_click=getdata())
 end = time.perf_counter()
 st.write(end - start)
-st.button('Get Data',on_click=calculation())
+
 def calculation():
         engine=sqlalchemy.create_engine('sqlite:///günlük.db')
         
