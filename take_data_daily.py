@@ -6,7 +6,7 @@ from streamlit_autorefresh import st_autorefresh
 
 start = time.perf_counter() 
 st.title('Screener')
-st_autorefresh(interval=1 * 60 * 1000, key="dataframerefresh")
+st_autorefresh(interval=60 * 60 * 1000, key="dataframerefresh")
 #@st.cache(suppress_st_warning=True)
 def getdata():
     exchange=ccxt.currencycom()
