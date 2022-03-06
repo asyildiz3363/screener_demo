@@ -6,7 +6,8 @@ from streamlit_autorefresh import st_autorefresh
 
 start = time.perf_counter() 
 st.title('Screener')
-st_autorefresh(interval=1 * 60 * 1000, key="dataframerefresh")
+st_autorefresh(interval=5 * 60 * 1000, key="dataframerefresh")
+@st.cache(ttl=1 * 60 * 1000)
 def getdata():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
@@ -17,7 +18,7 @@ def getdata():
     dfc['Date'] = dfc['Date'].dt.strftime('%d-%m-%Y %H:%M')
     dfc = dfc.set_index('Date')
     return dfc
-getdata()
+st.button('Get Data',on_click=getdata())
 end = time.perf_counter() 
 st.write(end - start)
 dfc=getdata()
