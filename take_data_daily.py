@@ -19,7 +19,6 @@ def getdata():
     dfc = dfc.set_index('Date')
     return dfc
 end = time.perf_counter() 
-st.button('Get Data',on_click=getdata())
 st.write(end - start)
 dfc=getdata()
 st.line_chart(dfc[['Close']])             
