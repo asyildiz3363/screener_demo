@@ -6,12 +6,12 @@ from streamlit_autorefresh import st_autorefresh
 
 start = time.perf_counter() 
 st.title('Screener')
-st_autorefresh(interval=60 * 60 * 1000, key="dataframerefresh")
-@st.cache(suppress_st_warning=True,ttl=58 * 60 * 1000)
+st_autorefresh(interval=1 * 60 * 1000, key="dataframerefresh")
+@st.cache(suppress_st_warning=True,ttl=0.5 * 60 * 1000)
 def getdata():
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
-    data2 = exchange.fetch_ohlcv('ETH/USDT', timeframe='1h',limit=24) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
+    data2 = exchange.fetch_ohlcv('ETH/USDT', timeframe='1m',limit=24) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
     header = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     dfc = pd.DataFrame(data2, columns=header)
     dfc['Date'] = pd.to_datetime(dfc['Date'],unit='ms')
