@@ -18,8 +18,8 @@ def getdata():
     dfc['Date'] = dfc['Date'].dt.strftime('%d-%m-%Y %H:%M')
     dfc = dfc.set_index('Date')
     return dfc
-st.button('Get Data',on_click=getdata())
 end = time.perf_counter() 
 st.write(end - start)
 dfc=getdata()
 st.line_chart(dfc[['Close']])             
+st.button('Get Data',on_click=getdata())
