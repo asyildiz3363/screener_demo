@@ -123,11 +123,7 @@ def get_framelist():
                 EMA_decision(frame)
                 ADX_decision(frame)
                 #Supertrend(frame)
-                print(name)
-                print(frame)
-                print(name)
                 sira +=1
-                print(sira)
                 st.write('günlük',sira,name)             
     return framelist    
 @st.cache(hash_funcs={sqlalchemy.engine.base.Engine:id},suppress_st_warning=True)      
@@ -144,10 +140,7 @@ def get_framelistw():
                 EMA_decision(framew)
                 ADX_decision(framew)
                 #Supertrend(framew)
-                print(name)
-                print(framew)
                 sira +=1
-                print(sira)
                 st.write('haftalik',sira,name)              
     return framelistw        
 connection_url='sqlite:///günlük.db'
