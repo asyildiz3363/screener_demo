@@ -8,12 +8,14 @@ import sqlalchemy
 import ccxt
 import time
 import pandas_ta as pa
-
+import os
  
 st.title('Screener')
 start = time.perf_counter()
 @st.cache(suppress_st_warning=True)
 def getdata():
+    os.remove("günlük.db")
+    os.remove("haftalik.db")
     exchange=ccxt.currencycom()
     markets= exchange.load_markets()    
     symbols1=pd.read_csv('csymbols.csv',header=None)
@@ -27,7 +29,7 @@ def getdata():
             index += 1
             try:
                 data2 = exchange.fetch_ohlcv(ticker, timeframe='1d',limit=155) #since=exchange.parse8601('2022-02-13T00:00:00Z'))
-                data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=55)
+                data3= exchange.fetch_ohlcv(ticker, timeframe='1w',limit=155)
                 st.write(f"⏳ {index,ticker} downloaded")
             except Exception as e:
                 print(e)
@@ -54,7 +56,7 @@ def getdata():
             df3=df2.reset_index()
             df4=df3.round(2)
             df4.to_sql(bticker,engine, if_exists='replace')
-            dfw=yf.download(bticker,period="55wk",interval = "1wk")
+            dfw=yf.download(bticker,period="155wk",interval = "1wk")
             df2w=dfw.drop('Adj Close', 1)
             df3w=df2w.reset_index()
             df4w=df3w.round(2)
@@ -123,7 +125,11 @@ def get_framelist():
                 EMA_decision(frame)
                 ADX_decision(frame)
                 #Supertrend(frame)
+                # print(name)
+                # print(frame)
+                # print(name)
                 sira +=1
+                #print(sira)
                 st.write('günlük',sira,name)             
     return framelist    
 @st.cache(hash_funcs={sqlalchemy.engine.base.Engine:id},suppress_st_warning=True)      
@@ -140,7 +146,10 @@ def get_framelistw():
                 EMA_decision(framew)
                 ADX_decision(framew)
                 #Supertrend(framew)
+                #print(name)
+                #print(framew)
                 sira +=1
+                #print(sira)
                 st.write('haftalik',sira,name)              
     return framelistw        
 connection_url='sqlite:///günlük.db'
